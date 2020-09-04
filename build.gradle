@@ -67,21 +67,13 @@ minecraft {
         }
 
         data {
-            workingDirectory project.file('run')
+            workingDirectory project.file("run")
+            environment 'target', 'fmluserdevdata'
+            properties 'fml.earlyprogresswindow': 'false'
 
-            // Recommended logging data for a userdev environment
-            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-
-            // Recommended logging level for the console
-            property 'forge.logging.console.level', 'debug'
-
-            args '--mod', 'adventuringenergies', '--all', '--output', file('src/generated/resources/')
-
-            mods {
-                adventuringenergies {
-                    source sourceSets.main
-                }
-            }
+            args '--all', '--output', file('src/generated/resources/'),
+                    '--mod', 'adventuringenergies', '--reports',
+                    '--existing', sourceSets.main.resources.srcDirs[0]
         }
     }
 }
