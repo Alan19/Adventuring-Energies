@@ -5,7 +5,7 @@ import net.minecraft.block.Block;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 
-public class AdventuringEnergiesBlocks {
+public class AEBlocks {
     private static DeferredRegister<Block> BLOCKS = DeferredRegister.create(Block.class, AdventuringEnergies.MOD_ID);
     public static RegistryObject<GoldenAltar> GOLDEN_ALTAR = BLOCKS.register("golden_altar", GoldenAltar::new);
     public static RegistryObject<MagicalGlows> MAGICAL_GLOWS = BLOCKS.register("magical_glows", MagicalGlows::new);
