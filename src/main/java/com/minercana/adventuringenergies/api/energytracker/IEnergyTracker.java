@@ -6,7 +6,19 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraftforge.common.util.INBTSerializable;
 
 public interface IEnergyTracker extends INBTSerializable<CompoundNBT> {
-    boolean useEnergy(EnergyType type, PlayerEntity player, int count);
+    /**
+     * Attempts to remove the specified amount of energy from a player. If the removal is simulated, the orbs will not be removed even if the player has enough energy.
+     * @param type The type of energy to remove
+     * @param player The player to remove the energy from
+     * @param count The units of energy to remove
+     * @param simulate If the removal is simulated
+     * @return If the player is able to have that many units of energy removed from them
+     */
+    boolean useEnergy(EnergyType type, PlayerEntity player, int count, boolean simulate);
+
+    default boolean useEnergy(EnergyType type, PlayerEntity player, int count) {
+        return useEnergy(type, player, count, false);
+    }
 
     default boolean useEnergy(EnergyType type, PlayerEntity player) {
         return useEnergy(type, player, 1);
@@ -25,4 +37,20 @@ public interface IEnergyTracker extends INBTSerializable<CompoundNBT> {
     }
 
     int getEnergy(EnergyType type);
+
+    default int increaseMaxEnergy() {
+        return increaseMaxEnergy(1);
+    }
+
+    int increaseMaxEnergy(int count);
+
+    default int decreaseMaxEnergy() {
+        return decreaseMaxEnergy(1);
+    }
+
+    int decreaseMaxEnergy(int count);
+
+    void setMaxEnergy(int count);
+
+    int getEnergyCap();
 }

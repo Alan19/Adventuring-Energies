@@ -2,12 +2,18 @@ package com.minercana.adventuringenergies;
 
 import com.minercana.adventuringenergies.api.NBTCapStorage;
 import com.minercana.adventuringenergies.api.energytracker.EnergyTracker;
+import com.minercana.adventuringenergies.api.energytracker.EnergyTrackerProvider;
 import com.minercana.adventuringenergies.api.energytracker.IEnergyTracker;
+import com.minercana.adventuringenergies.blocks.AEBlocks;
+import com.minercana.adventuringenergies.energytypes.AEEnergyTypes;
 import com.minercana.adventuringenergies.energytypes.EnergyType;
 import net.minecraft.block.Block;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.CapabilityManager;
+import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.InterModComms;
@@ -45,6 +51,9 @@ public class AdventuringEnergies {
         // Register custom energy orb registry
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::createRegisters);
 
+        // Register things in deferred registers
+        AEBlocks.register(FMLJavaModLoadingContext.get().getModEventBus());
+
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);
     }
@@ -58,6 +67,7 @@ public class AdventuringEnergies {
 
     private void createRegisters(RegistryEvent.NewRegistry event) {
         makeRegistry("energy_types", EnergyType.class);
+        AEEnergyTypes.register(FMLJavaModLoadingContext.get().getModEventBus());
     }
 
     private void setup(final FMLCommonSetupEvent event) {
@@ -71,7 +81,7 @@ public class AdventuringEnergies {
 
     private void enqueueIMC(final InterModEnqueueEvent event) {
         // some example code to dispatch IMC to another mod
-        InterModComms.sendTo("adventuringenergies", "helloworld", () -> {
+        InterModComms.sendTo(MOD_ID, "helloworld", () -> {
             LOGGER.info("Hello world from the MDK");
             return "Hello world";
         });

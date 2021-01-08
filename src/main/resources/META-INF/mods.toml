@@ -24,13 +24,13 @@ issueTrackerURL = "https://github.com/MinerArcana/Adventuring-Energies/issues"
 [[dependencies.adventuringenergies]]
     modId = "minecraft"
     mandatory = true
-    versionRange = "[1.16.2]"
+    versionRange = "[1.16.4]"
     ordering = "NONE"
     side = "BOTH"
 
-[[dependencies.curios]]
-    modId = "minecraft"
-    mandatory = true
-    versionRange = "[1.16.2]"
-    ordering = "NONE"
-    side = "BOTH"
+[[dependencies.adventuringenergies]]
+modId = "curios"
+mandatory = true
+versionRange = "[1.16.3-4.0.2.0,)"
+ordering = "NONE"
+side = "BOTH"
