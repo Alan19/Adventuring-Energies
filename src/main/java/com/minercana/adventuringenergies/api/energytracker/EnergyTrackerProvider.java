@@ -1,5 +1,6 @@
 package com.minercana.adventuringenergies.api.energytracker;
 
+import com.minercana.adventuringenergies.api.AdventuringEnergiesAPI;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Direction;
 import net.minecraftforge.common.capabilities.Capability;
@@ -26,16 +27,16 @@ public class EnergyTrackerProvider implements ICapabilitySerializable<CompoundNB
     @Nonnull
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
-        return null;
+        return cap == AdventuringEnergiesAPI.energyTrackerCapability ? trackerOptional.cast() : LazyOptional.empty();
     }
 
     @Override
     public CompoundNBT serializeNBT() {
-        return null;
+        return energyTracker.serializeNBT();
     }
 
     @Override
     public void deserializeNBT(CompoundNBT nbt) {
-
+        energyTracker.deserializeNBT(nbt);
     }
 }

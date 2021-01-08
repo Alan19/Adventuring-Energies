@@ -1,10 +1,13 @@
 package com.minercana.adventuringenergies;
 
+import com.minercana.adventuringenergies.api.NBTCapStorage;
+import com.minercana.adventuringenergies.api.energytracker.EnergyTracker;
+import com.minercana.adventuringenergies.api.energytracker.IEnergyTracker;
 import com.minercana.adventuringenergies.energytypes.EnergyType;
 import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.InterModComms;
@@ -46,10 +49,6 @@ public class AdventuringEnergies {
         MinecraftForge.EVENT_BUS.register(this);
     }
 
-    private void createRegisters(RegistryEvent.NewRegistry event) {
-        makeRegistry("energy_types", EnergyType.class);
-    }
-
     private static <T extends IForgeRegistryEntry<T>> void makeRegistry(String name, Class<T> type) {
         new RegistryBuilder<T>()
                 .setName(new ResourceLocation(AdventuringEnergies.MOD_ID, name))
@@ -57,10 +56,12 @@ public class AdventuringEnergies {
                 .create();
     }
 
+    private void createRegisters(RegistryEvent.NewRegistry event) {
+        makeRegistry("energy_types", EnergyType.class);
+    }
+
     private void setup(final FMLCommonSetupEvent event) {
-        // some preinit code
-        LOGGER.info("HELLO FROM PREINIT");
-        LOGGER.info("DIRT BLOCK >> {}", Blocks.DIRT.getRegistryName());
+        CapabilityManager.INSTANCE.register(IEnergyTracker.class, new NBTCapStorage<>(), EnergyTracker::new);
     }
 
     private void doClientStuff(final FMLClientSetupEvent event) {
