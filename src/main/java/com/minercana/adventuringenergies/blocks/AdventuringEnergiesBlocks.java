@@ -8,7 +8,7 @@ import net.minecraftforge.registries.DeferredRegister;
 
 public class AdventuringEnergiesBlocks {
     public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(Block.class, AdventuringEnergies.MOD_ID);
-    public static RegistryObject<GoldenAltar> GOLDEN_ALTAR = BLOCKS.register("golden_altar", GoldenAltar::new);
+    public static final RegistryObject<GoldenAltar> GOLDEN_ALTAR = BLOCKS.register("golden_altar", GoldenAltar::new);
 
     public static void register(IEventBus modEventBus) {
         BLOCKS.register(modEventBus);

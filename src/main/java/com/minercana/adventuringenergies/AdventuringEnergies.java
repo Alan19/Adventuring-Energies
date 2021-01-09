@@ -36,7 +36,7 @@ public class AdventuringEnergies {
     public static final String MOD_ID = "adventuringenergies";
 
     // Directly reference a log4j logger.
-    private static final Logger LOGGER = LogManager.getLogger();
+    public static final Logger LOGGER = LogManager.getLogger();
 
     public AdventuringEnergies() {
         // Register the setup method for modloading
