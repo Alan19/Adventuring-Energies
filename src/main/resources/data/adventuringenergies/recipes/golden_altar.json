@@ -1,0 +1,28 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "DBD",
+    "AGC",
+    "DGD"
+  ],
+  "key": {
+    "G": {
+      "tag": "forge:storage_blocks/gold"
+    },
+    "D": {
+      "tag": "forge:dusts/glowstone"
+    },
+    "A": {
+      "item": "minecraft:red_wool"
+    },
+    "B": {
+      "item": "minecraft:blue_wool"
+    },
+    "C": {
+      "item": "minecraft:green_wool"
+    }
+  },
+  "result": {
+    "item": "adventuringenergies:golden_altar"
+  }
+}

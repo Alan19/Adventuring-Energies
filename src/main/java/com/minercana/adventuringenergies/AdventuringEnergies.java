@@ -2,26 +2,25 @@ package com.minercana.adventuringenergies;
 
 import com.minercana.adventuringenergies.api.NBTCapStorage;
 import com.minercana.adventuringenergies.api.energytracker.EnergyTracker;
-import com.minercana.adventuringenergies.api.energytracker.EnergyTrackerProvider;
 import com.minercana.adventuringenergies.api.energytracker.IEnergyTracker;
-import com.minercana.adventuringenergies.blocks.AEBlocks;
+import com.minercana.adventuringenergies.blocks.AdventuringEnergiesBlocks;
+import com.minercana.adventuringenergies.data.AdventuringEnergiesBlockstateProvider;
+import com.minercana.adventuringenergies.data.AdventuringEnergiesLootTableProvider;
+import com.minercana.adventuringenergies.data.AdventuringEnergiesRecipeProvider;
 import com.minercana.adventuringenergies.energytypes.AEEnergyTypes;
 import com.minercana.adventuringenergies.energytypes.EnergyType;
+import com.minercana.adventuringenergies.items.AdventuringEnergiesItems;
 import net.minecraft.block.Block;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.data.DataGenerator;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.CapabilityManager;
-import net.minecraftforge.event.AttachCapabilitiesEvent;
+import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.InterModComms;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
-import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
+import net.minecraftforge.fml.event.lifecycle.*;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.IForgeRegistryEntry;
@@ -50,9 +49,12 @@ public class AdventuringEnergies {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::doClientStuff);
         // Register custom energy orb registry
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::createRegisters);
+        // Register data generators
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onGatherData);
 
         // Register things in deferred registers
-        AEBlocks.register(FMLJavaModLoadingContext.get().getModEventBus());
+        AdventuringEnergiesBlocks.register(FMLJavaModLoadingContext.get().getModEventBus());
+        AdventuringEnergiesItems.register(FMLJavaModLoadingContext.get().getModEventBus());
 
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);
@@ -92,6 +94,14 @@ public class AdventuringEnergies {
         LOGGER.info("Got IMC {}", event.getIMCStream().
                 map(m -> m.getMessageSupplier().get()).
                 collect(Collectors.toList()));
+    }
+
+    public void onGatherData(GatherDataEvent event){
+        final DataGenerator generator = event.getGenerator();
+        final ExistingFileHelper existingFileHelper = event.getExistingFileHelper();
+        generator.addProvider(new AdventuringEnergiesRecipeProvider(generator));
+        generator.addProvider(new AdventuringEnergiesLootTableProvider(generator));
+        generator.addProvider(new AdventuringEnergiesBlockstateProvider(generator, existingFileHelper));
     }
 
     // You can use SubscribeEvent and let the Event Bus discover methods to call
