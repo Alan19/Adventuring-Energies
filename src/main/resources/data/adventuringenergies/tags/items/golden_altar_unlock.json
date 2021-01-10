@@ -1,0 +1,8 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:sunflower",
+    "minecraft:honeycomb",
+    "minecraft:clock"
+  ]
+}

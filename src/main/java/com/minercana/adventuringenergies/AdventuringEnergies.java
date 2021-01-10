@@ -4,9 +4,7 @@ import com.minercana.adventuringenergies.api.NBTCapStorage;
 import com.minercana.adventuringenergies.api.energytracker.EnergyTracker;
 import com.minercana.adventuringenergies.api.energytracker.IEnergyTracker;
 import com.minercana.adventuringenergies.blocks.AdventuringEnergiesBlocks;
-import com.minercana.adventuringenergies.data.AdventuringEnergiesBlockstateProvider;
-import com.minercana.adventuringenergies.data.AdventuringEnergiesLootTableProvider;
-import com.minercana.adventuringenergies.data.AdventuringEnergiesRecipeProvider;
+import com.minercana.adventuringenergies.data.*;
 import com.minercana.adventuringenergies.energytypes.AEEnergyTypes;
 import com.minercana.adventuringenergies.energytypes.EnergyType;
 import com.minercana.adventuringenergies.items.AdventuringEnergiesItems;
@@ -102,6 +100,10 @@ public class AdventuringEnergies {
         generator.addProvider(new AdventuringEnergiesRecipeProvider(generator));
         generator.addProvider(new AdventuringEnergiesLootTableProvider(generator));
         generator.addProvider(new AdventuringEnergiesBlockstateProvider(generator, existingFileHelper));
+        generator.addProvider(new AdventuringEnergiesItemModels(generator, existingFileHelper));
+        final AdventuringEnergiesBlockTagProvider blockTagProvider = new AdventuringEnergiesBlockTagProvider(generator, existingFileHelper);
+        generator.addProvider(new AdventuringEnergiesItemTagProvider(generator, blockTagProvider, existingFileHelper));
+        generator.addProvider(new EnglishLocalization(generator));
     }
 
     // You can use SubscribeEvent and let the Event Bus discover methods to call
