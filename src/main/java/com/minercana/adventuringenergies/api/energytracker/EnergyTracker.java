@@ -2,6 +2,7 @@ package com.minercana.adventuringenergies.api.energytracker;
 
 import com.minercana.adventuringenergies.api.AdventuringEnergiesAPI;
 import com.minercana.adventuringenergies.energytypes.EnergyType;
+import com.minercana.adventuringenergies.network.AdventuringEnergiesNetwork;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;

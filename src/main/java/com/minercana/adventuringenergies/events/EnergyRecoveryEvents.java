@@ -3,11 +3,13 @@ package com.minercana.adventuringenergies.events;
 import com.minercana.adventuringenergies.AdventuringEnergies;
 import com.minercana.adventuringenergies.api.AdventuringEnergiesAPI;
 import com.minercana.adventuringenergies.energytypes.AEEnergyTypes;
+import com.minercana.adventuringenergies.network.AdventuringEnergiesNetwork;
 import net.minecraft.entity.item.BoatEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
@@ -17,6 +19,7 @@ public class EnergyRecoveryEvents {
     public static void goldenOrbRecovery(TickEvent.PlayerTickEvent event){
         if (event.player instanceof ServerPlayerEntity && event.player.getEntityWorld().getDayTime() % 1200 == 0 && isInDaylight(event.player)){
             event.player.getCapability(AdventuringEnergiesAPI.energyTrackerCapability).ifPresent(tracker -> tracker.addEnergy(AEEnergyTypes.YELLOW.get()));
+            AdventuringEnergiesNetwork.sendEnergyToClient((ServerPlayerEntity) event.player);
         }
     }
 
@@ -30,4 +33,10 @@ public class EnergyRecoveryEvents {
         return false;
     }
 
+    @SubscribeEvent
+    public static void sendCapToPlayer(PlayerEvent.PlayerLoggedInEvent event){
+        if (event.getPlayer() instanceof ServerPlayerEntity){
+            AdventuringEnergiesNetwork.sendEnergyToClient((ServerPlayerEntity) event.getPlayer());
+        }
+    }
 }

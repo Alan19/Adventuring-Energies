@@ -8,11 +8,14 @@ import com.minercana.adventuringenergies.data.*;
 import com.minercana.adventuringenergies.energytypes.AEEnergyTypes;
 import com.minercana.adventuringenergies.energytypes.EnergyType;
 import com.minercana.adventuringenergies.items.AdventuringEnergiesItems;
+import com.minercana.adventuringenergies.network.AdventuringEnergiesNetwork;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.RenderTypeLookup;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.data.ExistingFileHelper;
@@ -23,6 +26,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.*;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fml.network.simple.SimpleChannel;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 import net.minecraftforge.registries.RegistryBuilder;
 import org.apache.logging.log4j.LogManager;
@@ -37,6 +41,7 @@ import java.util.stream.Collectors;
 @Mod(AdventuringEnergies.MOD_ID)
 public class AdventuringEnergies {
     public static final String MOD_ID = "adventuringenergies";
+    public static final SimpleChannel INSTANCE = AdventuringEnergiesNetwork.getNetworkChannel();
 
     // Directly reference a log4j logger.
     public static final Logger LOGGER = LogManager.getLogger();
@@ -127,6 +132,7 @@ public class AdventuringEnergies {
         }
     }
 
+    @OnlyIn(Dist.CLIENT)
     private static class BlockRenderTypes {
         public void setupRenderTypes() {
             RenderType cutout = RenderType.getCutout();

@@ -4,6 +4,7 @@ import com.minercana.adventuringenergies.AdventuringEnergies;
 import com.minercana.adventuringenergies.api.AdventuringEnergiesAPI;
 import com.minercana.adventuringenergies.energytypes.AEEnergyTypes;
 import com.minercana.adventuringenergies.items.AdventuringEnergiesItems;
+import com.minercana.adventuringenergies.network.AdventuringEnergiesNetwork;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.PlayerEntity;
@@ -36,6 +37,7 @@ public class ToolEvents {
                     final Vector3d respawnPos = respawnLocation.getMiddle();
                     player.teleport(respawnLocation.getLeft(), respawnPos.getX(), respawnPos.getY(), respawnPos.getZ(), respawnLocation.getRight(), 0);
                     event.setCanceled(true);
+                    AdventuringEnergiesNetwork.sendEnergyToClient(player);
                 }
             });
         }
