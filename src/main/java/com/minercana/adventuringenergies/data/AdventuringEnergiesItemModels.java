@@ -1,6 +1,7 @@
 package com.minercana.adventuringenergies.data;
 
 import com.minercana.adventuringenergies.AdventuringEnergies;
+import com.minercana.adventuringenergies.blocks.AdventuringEnergiesBlocks;
 import com.minercana.adventuringenergies.items.AdventuringEnergiesItems;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.item.BlockNamedItem;
@@ -21,7 +22,7 @@ public class AdventuringEnergiesItemModels extends ItemModelProvider {
     @Override
     protected void registerModels() {
         forItem(AdventuringEnergiesItems.AMULET_OF_RECOVERY);
-        forBlockItemWithParent(AdventuringEnergiesItems.GOLDEN_ALTAR);
+        forBlockItem(AdventuringEnergiesItems.GOLDEN_ALTAR);
     }
 
     private void forItem(RegistryObject<? extends Item> item) {

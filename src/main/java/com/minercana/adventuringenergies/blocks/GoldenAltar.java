@@ -27,7 +27,7 @@ import java.util.Random;
 
 public class GoldenAltar extends Block {
     public GoldenAltar() {
-        super(AbstractBlock.Properties.create(Material.IRON, MaterialColor.GOLD).setRequiresTool().hardnessAndResistance(3.0F, 6.0F).sound(SoundType.METAL));
+        super(AbstractBlock.Properties.create(Material.IRON, MaterialColor.GOLD).setRequiresTool().hardnessAndResistance(3.0F, 6.0F).setLightLevel(value -> 15).sound(SoundType.METAL).notSolid());
     }
 
     @Override

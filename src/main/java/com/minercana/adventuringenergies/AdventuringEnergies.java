@@ -9,6 +9,8 @@ import com.minercana.adventuringenergies.energytypes.AEEnergyTypes;
 import com.minercana.adventuringenergies.energytypes.EnergyType;
 import com.minercana.adventuringenergies.items.AdventuringEnergiesItems;
 import net.minecraft.block.Block;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.RenderTypeLookup;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
@@ -80,6 +82,7 @@ public class AdventuringEnergies {
     private void doClientStuff(final FMLClientSetupEvent event) {
         // do something that can only be done on the client
         LOGGER.info("Got game settings {}", event.getMinecraftSupplier().get().gameSettings);
+        new BlockRenderTypes().setupRenderTypes();
     }
 
     private void enqueueIMC(final InterModEnqueueEvent event) {
@@ -121,6 +124,13 @@ public class AdventuringEnergies {
         public static void onBlocksRegistry(final RegistryEvent.Register<Block> blockRegistryEvent) {
             // register a new block here
             LOGGER.info("HELLO from Register Block");
+        }
+    }
+
+    private static class BlockRenderTypes {
+        public void setupRenderTypes() {
+            RenderType cutout = RenderType.getCutout();
+            RenderTypeLookup.setRenderLayer(AdventuringEnergiesBlocks.GOLDEN_ALTAR.get(), cutout);
         }
     }
 }
