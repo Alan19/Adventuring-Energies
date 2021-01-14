@@ -9,16 +9,14 @@ import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 
 public class AdventuringEnergiesItems {
+    private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(Item.class, AdventuringEnergies.MOD_ID);
+    public static final RegistryObject<BlockNamedItem> GOLDEN_ALTAR = ITEMS.register("golden_altar", () -> convertToBlockItem(AdventuringEnergiesBlocks.GOLDEN_ALTAR.get()));
     public static final ItemGroup ADVENTURING_ENERGIES_ITEM_GROUP = new ItemGroup(AdventuringEnergies.MOD_ID) {
         @Override
         public ItemStack createIcon() {
             return new ItemStack(GOLDEN_ALTAR.get());
         }
     };
-
-    private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(Item.class, AdventuringEnergies.MOD_ID);
-
-    public static final RegistryObject<BlockNamedItem> GOLDEN_ALTAR = ITEMS.register("golden_altar", () -> convertToBlockItem(AdventuringEnergiesBlocks.GOLDEN_ALTAR.get()));
     public static final RegistryObject<Item> AMULET_OF_RECOVERY = ITEMS.register("amulet_of_recovery", () -> new Item((new Item.Properties()).maxStackSize(1).group(ItemGroup.COMBAT).rarity(Rarity.UNCOMMON)));
 
     /**

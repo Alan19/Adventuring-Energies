@@ -1,7 +1,6 @@
 package com.minercana.adventuringenergies.data;
 
 import com.minercana.adventuringenergies.AdventuringEnergies;
-import com.minercana.adventuringenergies.AdventuringEnergiesTags;
 import net.minecraft.data.BlockTagsProvider;
 import net.minecraft.data.DataGenerator;
 import net.minecraftforge.common.data.ExistingFileHelper;

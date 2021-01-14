@@ -28,7 +28,7 @@ public class AdventuringEnergiesNetwork {
         return channel;
     }
 
-    public static void sendEnergyToClient(ServerPlayerEntity player){
+    public static void sendEnergyToClient(ServerPlayerEntity player) {
         player.getCapability(AdventuringEnergiesAPI.energyTrackerCapability).ifPresent(tracker -> AdventuringEnergies.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), new SyncEnergiesMessage(tracker)));
     }
 }

@@ -102,7 +102,7 @@ public class AdventuringEnergies {
                 collect(Collectors.toList()));
     }
 
-    public void onGatherData(GatherDataEvent event){
+    public void onGatherData(GatherDataEvent event) {
         final DataGenerator generator = event.getGenerator();
         final ExistingFileHelper existingFileHelper = event.getExistingFileHelper();
         generator.addProvider(new AdventuringEnergiesRecipeProvider(generator));

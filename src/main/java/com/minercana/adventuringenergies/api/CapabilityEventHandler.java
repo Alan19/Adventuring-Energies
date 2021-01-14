@@ -13,7 +13,7 @@ import net.minecraftforge.fml.common.Mod;
 public class CapabilityEventHandler {
     @SubscribeEvent
     public static void attachCapabilitiesToPlayers(AttachCapabilitiesEvent<Entity> event) {
-        if (event.getObject() instanceof PlayerEntity){
+        if (event.getObject() instanceof PlayerEntity) {
             event.addCapability(new ResourceLocation(AdventuringEnergies.MOD_ID, "energy_tracker"), new EnergyTrackerProvider());
         }
     }

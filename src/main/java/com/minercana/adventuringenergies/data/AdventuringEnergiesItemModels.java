@@ -1,7 +1,6 @@
 package com.minercana.adventuringenergies.data;
 
 import com.minercana.adventuringenergies.AdventuringEnergies;
-import com.minercana.adventuringenergies.blocks.AdventuringEnergiesBlocks;
 import com.minercana.adventuringenergies.items.AdventuringEnergiesItems;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.item.BlockNamedItem;

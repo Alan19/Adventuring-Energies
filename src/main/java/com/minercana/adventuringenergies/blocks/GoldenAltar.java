@@ -10,6 +10,7 @@ import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.material.MaterialColor;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
@@ -37,13 +38,13 @@ public class GoldenAltar extends Block {
         if (handIn == Hand.MAIN_HAND) {
             // If the player has less than 3 max energy, set their max energy to 3, give them 3 yellow energy, spawn enchant particles, and play the enchanting sound
             final LazyOptional<IEnergyTracker> energyTrackerOptional = player.getCapability(AdventuringEnergiesAPI.energyTrackerCapability);
+            Random rand = worldIn.getRandom();
             if (energyTrackerOptional.map(tracker -> tracker.getEnergyCap() < 3).orElse(false)) {
-                energyTrackerOptional.ifPresent(tracker -> {
-                    tracker.setMaxEnergy(3);
-                    tracker.addEnergy(AEEnergyTypes.YELLOW.get(), 3);
-                });
-                Random rand = worldIn.getRandom();
-                if (worldIn instanceof ServerWorld) {
+                if (player instanceof ServerPlayerEntity) {
+                    energyTrackerOptional.ifPresent(tracker -> {
+                        tracker.setMaxEnergy(3, (ServerPlayerEntity) player);
+                        tracker.addEnergy(AEEnergyTypes.YELLOW.get(), 3, (ServerPlayerEntity) player);
+                    });
                     ((ServerWorld) worldIn).spawnParticle(ParticleTypes.ENCHANT, player.getPosX(), player.getPosY(), player.getPosZ(), 4, (rand.nextDouble() - rand.nextDouble()) * .5, (rand.nextDouble() - rand.nextDouble()), (rand.nextDouble() - rand.nextDouble()) * .5, .1);
                 }
                 worldIn.playSound(player, pos, SoundEvents.BLOCK_ENCHANTMENT_TABLE_USE, SoundCategory.BLOCKS, 1.0F, rand.nextFloat() + 0.9F);

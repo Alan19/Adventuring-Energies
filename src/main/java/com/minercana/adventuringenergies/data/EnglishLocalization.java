@@ -6,8 +6,6 @@ import com.minercana.adventuringenergies.items.AdventuringEnergiesItems;
 import net.minecraft.data.DataGenerator;
 import net.minecraftforge.common.data.LanguageProvider;
 
-import java.util.Locale;
-
 public class EnglishLocalization extends LanguageProvider {
     public EnglishLocalization(DataGenerator gen) {
         super(gen, AdventuringEnergies.MOD_ID, "en_us");

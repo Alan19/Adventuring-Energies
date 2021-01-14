@@ -40,7 +40,7 @@ public class AdventuringEnergiesLootTableProvider extends LootTableProvider {
         @Override
         @Nonnull
         protected Iterable<Block> getKnownBlocks() {
-                return AdventuringEnergiesBlocks.BLOCKS.getEntries().stream().map(RegistryObject::get).collect(Collectors.toList());
+            return AdventuringEnergiesBlocks.BLOCKS.getEntries().stream().map(RegistryObject::get).collect(Collectors.toList());
         }
 
         @Override

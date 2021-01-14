@@ -1,4 +1,5 @@
 package com.minercana.adventuringenergies.rendering;
+
 import com.minercana.adventuringenergies.AdventuringEnergies;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -211,12 +212,14 @@ public class RenderHelper {
                     matrixStack.scale(.5f, .5f, .5f);
                     fr.drawStringWithShadow(matrixStack, s, ((xPosition + 19 - 2) * 2 - 1 - fr.getStringWidth(s)), yPosition * 2 + 24, 16777215);
                     matrixStack.pop();
-                } else if (scaled == 1) {
+                }
+                else if (scaled == 1) {
                     matrixStack.push();
                     matrixStack.scale(.75f, .75f, .75f);
                     fr.drawStringWithShadow(matrixStack, s, ((xPosition - 2) * 1.34f + 24 - fr.getStringWidth(s)), yPosition * 1.34f + 14, 16777215);
                     matrixStack.pop();
-                } else {
+                }
+                else {
                     fr.drawStringWithShadow(matrixStack, s, (xPosition + 19 - 2 - fr.getStringWidth(s)), (yPosition + 6 + 3), 16777215);
                 }
                 RenderSystem.enableLighting();
@@ -307,6 +310,25 @@ public class RenderHelper {
         return width;
     }
 
+    private static Vector Cross(Vector a, Vector b) {
+        float x = a.y * b.z - a.z * b.y;
+        float y = a.z * b.x - a.x * b.z;
+        float z = a.x * b.y - a.y * b.x;
+        return new Vector(x, y, z);
+    }
+
+    private static Vector Sub(Vector a, Vector b) {
+        return new Vector(a.x - b.x, a.y - b.y, a.z - b.z);
+    }
+
+    private static Vector Add(Vector a, Vector b) {
+        return new Vector(a.x + b.x, a.y + b.y, a.z + b.z);
+    }
+
+    private static Vector Mul(Vector a, float f) {
+        return new Vector(a.x * f, a.y * f, a.z * f);
+    }
+
     public static class Vector {
         public final float x;
         public final float y;
@@ -338,25 +360,6 @@ public class RenderHelper {
             float n = norm();
             return new Vector(x / n, y / n, z / n);
         }
-    }
-
-    private static Vector Cross(Vector a, Vector b) {
-        float x = a.y * b.z - a.z * b.y;
-        float y = a.z * b.x - a.x * b.z;
-        float z = a.x * b.y - a.y * b.x;
-        return new Vector(x, y, z);
-    }
-
-    private static Vector Sub(Vector a, Vector b) {
-        return new Vector(a.x - b.x, a.y - b.y, a.z - b.z);
-    }
-
-    private static Vector Add(Vector a, Vector b) {
-        return new Vector(a.x + b.x, a.y + b.y, a.z + b.z);
-    }
-
-    private static Vector Mul(Vector a, float f) {
-        return new Vector(a.x * f, a.y * f, a.z * f);
     }
 
 

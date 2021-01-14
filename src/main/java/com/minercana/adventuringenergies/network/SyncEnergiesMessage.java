@@ -16,7 +16,7 @@ public class SyncEnergiesMessage {
         this.energy = energy.serializeNBT();
     }
 
-    public SyncEnergiesMessage(CompoundNBT energyNBT){
+    public SyncEnergiesMessage(CompoundNBT energyNBT) {
         this.energy = energyNBT;
     }
 

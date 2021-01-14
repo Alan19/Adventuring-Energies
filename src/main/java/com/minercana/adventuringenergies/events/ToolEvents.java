@@ -4,7 +4,6 @@ import com.minercana.adventuringenergies.AdventuringEnergies;
 import com.minercana.adventuringenergies.api.AdventuringEnergiesAPI;
 import com.minercana.adventuringenergies.energytypes.AEEnergyTypes;
 import com.minercana.adventuringenergies.items.AdventuringEnergiesItems;
-import com.minercana.adventuringenergies.network.AdventuringEnergiesNetwork;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.PlayerEntity;
@@ -37,7 +36,6 @@ public class ToolEvents {
                     final Vector3d respawnPos = respawnLocation.getMiddle();
                     player.teleport(respawnLocation.getLeft(), respawnPos.getX(), respawnPos.getY(), respawnPos.getZ(), respawnLocation.getRight(), 0);
                     event.setCanceled(true);
-                    AdventuringEnergiesNetwork.sendEnergyToClient(player);
                 }
             });
         }
@@ -45,10 +43,11 @@ public class ToolEvents {
 
     /**
      * Finds the respawn world and position for a player
+     *
      * @param playerEntity The player to find respawn info for
      * @return A pair with the world and blockpos to spawn the player in
      */
-    private static Triple<ServerWorld, Vector3d, Float> findRespawnLocation(ServerPlayerEntity playerEntity){
+    private static Triple<ServerWorld, Vector3d, Float> findRespawnLocation(ServerPlayerEntity playerEntity) {
         BlockPos spawnPosition = playerEntity.func_241140_K_();
         float defaultRespawnAngle = playerEntity.func_242109_L();
         boolean forceRespawn = playerEntity.func_241142_M_();
@@ -72,10 +71,11 @@ public class ToolEvents {
         if (!blockstate.isIn(BlockTags.BEDS) && !usingRespawnAnchor) {
             // Do nothing when player is in a bed
             respawnAngle = defaultRespawnAngle;
-        } else {
+        }
+        else {
             // Adjust the respawn angle if player is using a repsawn anchor
             Vector3d vector3d1 = Vector3d.copyCenteredHorizontally(spawnPosition).subtract(vector3d).normalize();
-            respawnAngle = (float)MathHelper.wrapDegrees(MathHelper.atan2(vector3d1.z, vector3d1.x) * (double)(180F / (float)Math.PI) - 90.0D);
+            respawnAngle = (float) MathHelper.wrapDegrees(MathHelper.atan2(vector3d1.z, vector3d1.x) * (double) (180F / (float) Math.PI) - 90.0D);
         }
 
         // Use world spawn if optional is empty (no bed or respawn anchor)
