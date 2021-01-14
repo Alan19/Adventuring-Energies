@@ -25,33 +25,35 @@ public interface IEnergyTracker extends INBTSerializable<CompoundNBT> {
         return useEnergy(type, player, 1);
     }
 
-    int removeEnergy(EnergyType type, int count, ServerPlayerEntity player);
+    int removeEnergy(EnergyType type, int count, ServerPlayerEntity player, boolean simulate);
 
-    default int removeEnergy(EnergyType type, ServerPlayerEntity player) {
-        return removeEnergy(type, 1, player);
+    default int removeEnergy(EnergyType type, ServerPlayerEntity player, boolean simulate) {
+        return removeEnergy(type, 1, player, simulate);
     }
 
-    int addEnergy(EnergyType type, int count, ServerPlayerEntity player);
+    int addEnergy(EnergyType type, int count, ServerPlayerEntity player, boolean simulate);
 
-    default int addEnergy(EnergyType type, ServerPlayerEntity player) {
-        return addEnergy(type, 1, player);
+    default int addEnergy(EnergyType type, ServerPlayerEntity player, boolean simulate) {
+        return addEnergy(type, 1, player, simulate);
     }
 
     int getEnergy(EnergyType type);
 
-    default int increaseMaxEnergy(ServerPlayerEntity player) {
-        return increaseMaxEnergy(1, player);
+    default int increaseMaxEnergy(EnergyType type, ServerPlayerEntity player, boolean simulate) {
+        return increaseMaxEnergy(type, 1, player, simulate);
     }
 
-    int increaseMaxEnergy(int count, ServerPlayerEntity player);
+    int increaseMaxEnergy(EnergyType type, int count, ServerPlayerEntity player, boolean simulate);
 
-    default int decreaseMaxEnergy(ServerPlayerEntity player) {
-        return decreaseMaxEnergy(1, player);
+    default int decreaseMaxEnergy(EnergyType type, ServerPlayerEntity player, boolean simulate) {
+        return decreaseMaxEnergy(type,1, player, simulate);
     }
 
-    int decreaseMaxEnergy(int count, ServerPlayerEntity player);
+    int decreaseMaxEnergy(EnergyType type, int count, ServerPlayerEntity player, boolean simulate);
 
-    void setMaxEnergy(int count, ServerPlayerEntity player);
+    void setEnergyCapForType(EnergyType type, int count, ServerPlayerEntity player);
 
-    int getEnergyCap();
+    int getEnergyCap(EnergyType type);
+
+    int getTotalEnergyCap();
 }

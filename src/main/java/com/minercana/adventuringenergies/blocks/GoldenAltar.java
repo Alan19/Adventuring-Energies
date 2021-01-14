@@ -39,11 +39,11 @@ public class GoldenAltar extends Block {
             // If the player has less than 3 max energy, set their max energy to 3, give them 3 yellow energy, spawn enchant particles, and play the enchanting sound
             final LazyOptional<IEnergyTracker> energyTrackerOptional = player.getCapability(AdventuringEnergiesAPI.energyTrackerCapability);
             Random rand = worldIn.getRandom();
-            if (energyTrackerOptional.map(tracker -> tracker.getEnergyCap() < 3).orElse(false)) {
+            if (energyTrackerOptional.map(tracker -> tracker.getTotalEnergyCap() == 0).orElse(false)) {
                 if (player instanceof ServerPlayerEntity) {
                     energyTrackerOptional.ifPresent(tracker -> {
-                        tracker.setMaxEnergy(3, (ServerPlayerEntity) player);
-                        tracker.addEnergy(AEEnergyTypes.YELLOW.get(), 3, (ServerPlayerEntity) player);
+                        tracker.setEnergyCapForType(AEEnergyTypes.YELLOW.get(),3, (ServerPlayerEntity) player);
+                        tracker.addEnergy(AEEnergyTypes.YELLOW.get(), 3, (ServerPlayerEntity) player, false);
                     });
                     ((ServerWorld) worldIn).spawnParticle(ParticleTypes.ENCHANT, player.getPosX(), player.getPosY(), player.getPosZ(), 4, (rand.nextDouble() - rand.nextDouble()) * .5, (rand.nextDouble() - rand.nextDouble()), (rand.nextDouble() - rand.nextDouble()) * .5, .1);
                 }

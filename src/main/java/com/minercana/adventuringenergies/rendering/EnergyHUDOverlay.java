@@ -57,7 +57,7 @@ public class EnergyHUDOverlay {
 
         // Clear color and render remaining slots as blank orbs
         RenderSystem.color4f(1, 1, 1, 1f);
-        for (int leftoverOrb = orbIndex; leftoverOrb < tracker.getEnergyCap(); leftoverOrb++) {
+        for (int leftoverOrb = orbIndex; leftoverOrb < tracker.getTotalEnergyCap(); leftoverOrb++) {
             float angle = ((leftoverOrb + 1) / (float) orbCount) * 360;
             double rotX = Math.cos(Math.toRadians(angle)) * radius;
             double rotY = -Math.sin(Math.toRadians(angle)) * radius;
