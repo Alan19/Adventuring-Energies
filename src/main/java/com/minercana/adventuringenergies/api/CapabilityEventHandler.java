@@ -1,6 +1,7 @@
 package com.minercana.adventuringenergies.api;
 
 import com.minercana.adventuringenergies.AdventuringEnergies;
+import com.minercana.adventuringenergies.api.energyrecoverytimers.EnergyRecoveryProvider;
 import com.minercana.adventuringenergies.api.energytracker.EnergyTrackerProvider;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -15,6 +16,7 @@ public class CapabilityEventHandler {
     public static void attachCapabilitiesToPlayers(AttachCapabilitiesEvent<Entity> event) {
         if (event.getObject() instanceof PlayerEntity) {
             event.addCapability(new ResourceLocation(AdventuringEnergies.MOD_ID, "energy_tracker"), new EnergyTrackerProvider());
+            event.addCapability(new ResourceLocation(AdventuringEnergies.MOD_ID, "energy_recovery_timers"), new EnergyRecoveryProvider());
         }
     }
 }

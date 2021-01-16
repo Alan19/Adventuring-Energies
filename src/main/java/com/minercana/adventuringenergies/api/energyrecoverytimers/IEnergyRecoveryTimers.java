@@ -10,8 +10,13 @@ public interface IEnergyRecoveryTimers extends INBTSerializable<CompoundNBT> {
 
     int getGreenTimer();
 
-    boolean incrementBlueTimer(ServerPlayerEntity playerEntity);
+    boolean incrementBlueTimer(ServerPlayerEntity playerEntity, int i);
 
     boolean incrementGreenTimer(ServerPlayerEntity playerEntity);
 
+    boolean incrementYellowTimer(ServerPlayerEntity playerEntity, int i);
+
+    void resetYellowTimer();
+
+    void resetBlueTimer();
 }

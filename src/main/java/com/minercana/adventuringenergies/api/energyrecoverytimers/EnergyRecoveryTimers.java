@@ -7,12 +7,16 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.RegistryKey;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.biome.Biome;
-import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.BiomeDictionary;
 
 public class EnergyRecoveryTimers implements IEnergyRecoveryTimers {
     private int blueTimer;
     private int greenTimer;
+    private int yellowTimer;
+
+    public int getYellowTimer() {
+        return yellowTimer;
+    }
 
     @Override
     public int getBlueTimer() {
@@ -25,23 +29,18 @@ public class EnergyRecoveryTimers implements IEnergyRecoveryTimers {
     }
 
     @Override
-    public boolean incrementBlueTimer(ServerPlayerEntity playerEntity) {
-        if (playerEntity.getCapability(AdventuringEnergiesAPI.energyTrackerCapability).map(tracker -> tracker.addEnergy(AEEnergyTypes.AZURE.get(), playerEntity, true) == 0).orElse(false)) {
-            blueTimer++;
-            if (blueTimer >= getBlueRequiredTime(playerEntity)) {
-                return playerEntity.getCapability(AdventuringEnergiesAPI.energyTrackerCapability).map(tracker -> tracker.addEnergy(AEEnergyTypes.AZURE.get(), playerEntity, false) == 0).orElse(false);
-
-            }
-        }
-        else {
+    public boolean incrementBlueTimer(ServerPlayerEntity playerEntity, int i) {
+        blueTimer += i;
+        if (blueTimer >= getBlueRequiredTime(playerEntity)) {
             blueTimer = 0;
+            return true;
         }
         return false;
     }
 
     @Override
     public boolean incrementGreenTimer(ServerPlayerEntity playerEntity) {
-        if (playerEntity.getCapability(AdventuringEnergiesAPI.energyTrackerCapability).map(tracker -> tracker.addEnergy(AEEnergyTypes.VERDANT.get(), playerEntity, true) == 0).orElse(false)){
+        if (playerEntity.getCapability(AdventuringEnergiesAPI.energyTrackerCapability).map(tracker -> tracker.addEnergy(AEEnergyTypes.VERDANT.get(), playerEntity, true) == 0).orElse(false)) {
             if (playerEntity.isAirBorne) {
                 greenTimer++;
             }
@@ -49,9 +48,19 @@ public class EnergyRecoveryTimers implements IEnergyRecoveryTimers {
                 greenTimer = 0;
             }
             if (greenTimer >= 400) {
-                playerEntity.getCapability(AdventuringEnergiesAPI.energyTrackerCapability).map(tracker -> tracker.addEnergy(AEEnergyTypes.VERDANT.get(), playerEntity));
+                playerEntity.getCapability(AdventuringEnergiesAPI.energyTrackerCapability).ifPresent(tracker -> tracker.addEnergy(AEEnergyTypes.VERDANT.get(), playerEntity, false));
                 return true;
             }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean incrementYellowTimer(ServerPlayerEntity player, int i) {
+        yellowTimer += i;
+        if (yellowTimer >= 1200) {
+            yellowTimer = 0;
+            return true;
         }
         return false;
     }
@@ -72,10 +81,21 @@ public class EnergyRecoveryTimers implements IEnergyRecoveryTimers {
     }
 
     @Override
+    public void resetYellowTimer() {
+        yellowTimer = 0;
+    }
+
+    @Override
+    public void resetBlueTimer() {
+        blueTimer = 0;
+    }
+
+    @Override
     public CompoundNBT serializeNBT() {
         CompoundNBT nbt = new CompoundNBT();
         nbt.putInt("AzureTimer", blueTimer);
         nbt.putInt("VeridianTimer", greenTimer);
+        nbt.putInt("YellowTimer", yellowTimer);
         return nbt;
     }
 
@@ -83,5 +103,6 @@ public class EnergyRecoveryTimers implements IEnergyRecoveryTimers {
     public void deserializeNBT(CompoundNBT nbt) {
         blueTimer = nbt.getInt("AzureTimer");
         greenTimer = nbt.getInt("VeridianTimer");
+        yellowTimer = nbt.getInt("YellowTimer");
     }
 }

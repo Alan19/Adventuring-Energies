@@ -2,24 +2,97 @@ package com.minercana.adventuringenergies.events;
 
 import com.minercana.adventuringenergies.AdventuringEnergies;
 import com.minercana.adventuringenergies.api.AdventuringEnergiesAPI;
+import com.minercana.adventuringenergies.api.energyrecoverytimers.IEnergyRecoveryTimers;
+import com.minercana.adventuringenergies.api.energytracker.IEnergyTracker;
 import com.minercana.adventuringenergies.energytypes.AEEnergyTypes;
+import com.minercana.adventuringenergies.energytypes.EnergyType;
 import com.minercana.adventuringenergies.network.AdventuringEnergiesNetwork;
 import net.minecraft.entity.item.BoatEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.event.entity.player.PlayerXpEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import org.apache.commons.lang3.tuple.Pair;
+import org.apache.logging.log4j.core.jmx.Server;
+
+import javax.annotation.Nonnull;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 @Mod.EventBusSubscriber(modid = AdventuringEnergies.MOD_ID)
 public class EnergyRecoveryEvents {
+    private static final Map<UUID, Pair<LazyOptional<IEnergyRecoveryTimers>, LazyOptional<IEnergyTracker>>> timersMap = new HashMap<>();
+
     @SubscribeEvent
     public static void goldenOrbRecovery(TickEvent.PlayerTickEvent event) {
-        if (event.player instanceof ServerPlayerEntity && event.player.getEntityWorld().getDayTime() % 1200 == 0 && isInDaylight(event.player)) {
-            event.player.getCapability(AdventuringEnergiesAPI.energyTrackerCapability).ifPresent(tracker -> tracker.addEnergy(AEEnergyTypes.YELLOW.get(), (ServerPlayerEntity) event.player));
+        if (event.player instanceof ServerPlayerEntity) {
+            final ServerPlayerEntity player = (ServerPlayerEntity) event.player;
+            final Pair<LazyOptional<IEnergyRecoveryTimers>, LazyOptional<IEnergyTracker>> timerTrackerPair = getTimerTrackerPair(player);
+            handleGoldOrbRecovery(player, timerTrackerPair);
+            handleAzureOrbRecovery(player, timerTrackerPair);
         }
+    }
+
+    @Nonnull
+    private static Pair<LazyOptional<IEnergyRecoveryTimers>, LazyOptional<IEnergyTracker>> getTimerTrackerPair(ServerPlayerEntity player) {
+        return timersMap.computeIfAbsent(player.getUniqueID(), uuid -> Pair.of(player.getCapability(AdventuringEnergiesAPI.energyRecoveryTimersCapability), player.getCapability(AdventuringEnergiesAPI.energyTrackerCapability)));
+    }
+
+    @SubscribeEvent
+    public static void onPlayerHurt(LivingDamageEvent event) {
+        if (event.getEntityLiving() instanceof ServerPlayerEntity) {
+            getTimerTrackerPair((ServerPlayerEntity) event.getEntityLiving()).getLeft().ifPresent(IEnergyRecoveryTimers::resetBlueTimer);
+        }
+    }
+
+    @SubscribeEvent
+    public static void onPlayerPickupXP(PlayerXpEvent.PickupXp event) {
+        if (event.getPlayer() instanceof ServerPlayerEntity) {
+            final ServerPlayerEntity player = (ServerPlayerEntity) event.getPlayer();
+            final Pair<LazyOptional<IEnergyRecoveryTimers>, LazyOptional<IEnergyTracker>> timerTrackerPair = getTimerTrackerPair(player);
+            if (canAddOrb(player, AEEnergyTypes.AZURE.get())) {
+                final Boolean timerFilled = timerTrackerPair.getLeft().map(timer -> timer.incrementBlueTimer(player, event.getOrb().getXpValue())).orElse(false);
+                if (timerFilled) {
+                    timerTrackerPair.getRight().ifPresent(tracker -> tracker.addEnergy(AEEnergyTypes.AZURE.get(), player, false));
+                }
+            }
+        }
+    }
+
+    private static void handleAzureOrbRecovery(ServerPlayerEntity player, Pair<LazyOptional<IEnergyRecoveryTimers>, LazyOptional<IEnergyTracker>> timerTrackerPair) {
+        if (!canAddOrb(player, AEEnergyTypes.AZURE.get())) {
+            timerTrackerPair.getLeft().ifPresent(IEnergyRecoveryTimers::resetBlueTimer);
+        }
+        else {
+            final Boolean timerFilled = timerTrackerPair.getLeft().map(timers -> timers.incrementBlueTimer(player, 1)).orElse(false);
+            if (timerFilled) {
+                timerTrackerPair.getRight().ifPresent(tracker -> tracker.addEnergy(AEEnergyTypes.AZURE.get(), player, false));
+            }
+        }
+    }
+
+    private static void handleGoldOrbRecovery(ServerPlayerEntity player, Pair<LazyOptional<IEnergyRecoveryTimers>, LazyOptional<IEnergyTracker>> timersLazyOptional) {
+        if (!isInDaylight(player) || !canAddOrb(player, AEEnergyTypes.YELLOW.get())) {
+            timersLazyOptional.getLeft().ifPresent(IEnergyRecoveryTimers::resetYellowTimer);
+        }
+        else {
+            final Boolean timerFilled = timersLazyOptional.getLeft().map(timers -> timers.incrementYellowTimer(player, 1)).orElse(false);
+            if (timerFilled) {
+                timersLazyOptional.getRight().ifPresent(tracker -> tracker.addEnergy(AEEnergyTypes.YELLOW.get(), player, false));
+            }
+        }
+    }
+
+    @Nonnull
+    private static Boolean canAddOrb(ServerPlayerEntity player, EnergyType energyType) {
+        return player.getCapability(AdventuringEnergiesAPI.energyTrackerCapability).map(tracker -> tracker.addEnergy(energyType, player, true) == 0).orElse(false);
     }
 
     protected static boolean isInDaylight(PlayerEntity playerEntity) {
@@ -32,10 +105,12 @@ public class EnergyRecoveryEvents {
         return false;
     }
 
+
     @SubscribeEvent
     public static void sendEnergyToClientOnLogin(PlayerEvent.PlayerLoggedInEvent event) {
         if (event.getPlayer() instanceof ServerPlayerEntity) {
             AdventuringEnergiesNetwork.sendEnergyToClient((ServerPlayerEntity) event.getPlayer());
         }
     }
+
 }

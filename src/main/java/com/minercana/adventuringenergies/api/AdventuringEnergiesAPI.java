@@ -1,5 +1,6 @@
 package com.minercana.adventuringenergies.api;
 
+import com.minercana.adventuringenergies.api.energyrecoverytimers.IEnergyRecoveryTimers;
 import com.minercana.adventuringenergies.api.energytracker.IEnergyTracker;
 import com.minercana.adventuringenergies.energytypes.EnergyType;
 import net.minecraftforge.common.capabilities.Capability;
@@ -13,4 +14,7 @@ public class AdventuringEnergiesAPI {
 
     @CapabilityInject(IEnergyTracker.class)
     public static Capability<IEnergyTracker> energyTrackerCapability;
+
+    @CapabilityInject(IEnergyRecoveryTimers.class)
+    public static Capability<IEnergyRecoveryTimers> energyRecoveryTimersCapability;
 }

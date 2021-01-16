@@ -1,6 +1,8 @@
 package com.minercana.adventuringenergies;
 
 import com.minercana.adventuringenergies.api.NBTCapStorage;
+import com.minercana.adventuringenergies.api.energyrecoverytimers.EnergyRecoveryTimers;
+import com.minercana.adventuringenergies.api.energyrecoverytimers.IEnergyRecoveryTimers;
 import com.minercana.adventuringenergies.api.energytracker.EnergyTracker;
 import com.minercana.adventuringenergies.api.energytracker.IEnergyTracker;
 import com.minercana.adventuringenergies.blocks.AdventuringEnergiesBlocks;
@@ -82,6 +84,7 @@ public class AdventuringEnergies {
 
     private void setup(final FMLCommonSetupEvent event) {
         CapabilityManager.INSTANCE.register(IEnergyTracker.class, new NBTCapStorage<>(), EnergyTracker::new);
+        CapabilityManager.INSTANCE.register(IEnergyRecoveryTimers.class, new NBTCapStorage<>(), EnergyRecoveryTimers::new);
     }
 
     private void doClientStuff(final FMLClientSetupEvent event) {
