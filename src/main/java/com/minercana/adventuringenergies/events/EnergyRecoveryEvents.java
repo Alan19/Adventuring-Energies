@@ -52,13 +52,14 @@ public class EnergyRecoveryEvents {
         }
     }
 
+    // TODO Make XP orbs give progress towards next orb
     @SubscribeEvent
     public static void onPlayerPickupXP(PlayerXpEvent.PickupXp event) {
         if (event.getPlayer() instanceof ServerPlayerEntity) {
             final ServerPlayerEntity player = (ServerPlayerEntity) event.getPlayer();
             final Pair<LazyOptional<IEnergyRecoveryTimers>, LazyOptional<IEnergyTracker>> timerTrackerPair = getTimerTrackerPair(player);
             if (canAddOrb(player, AEEnergyTypes.AZURE.get())) {
-                final Boolean timerFilled = timerTrackerPair.getLeft().map(timer -> timer.incrementBlueTimer(player, event.getOrb().getXpValue())).orElse(false);
+                final Boolean timerFilled = timerTrackerPair.getLeft().map(timer -> timer.incrementBlueTimer(player, event.getOrb().getXpValue() * 20)).orElse(false);
                 if (timerFilled) {
                     timerTrackerPair.getRight().ifPresent(tracker -> tracker.addEnergy(AEEnergyTypes.AZURE.get(), player, false));
                 }
@@ -99,7 +100,7 @@ public class EnergyRecoveryEvents {
         if (playerEntity.world.isDaytime() && !playerEntity.world.isRemote) {
             float f = playerEntity.getBrightness();
             BlockPos blockpos = playerEntity.getRidingEntity() instanceof BoatEntity ? (new BlockPos(playerEntity.getPosX(), (double) Math.round(playerEntity.getPosY()), playerEntity.getPosZ())).up() : new BlockPos(playerEntity.getPosX(), (double) Math.round(playerEntity.getPosY()), playerEntity.getPosZ());
-            return f > 0.5F && playerEntity.world.rand.nextFloat() * 30.0F < (f - 0.4F) * 2.0F && playerEntity.world.canSeeSky(blockpos);
+            return f > 0.5F && playerEntity.world.canSeeSky(blockpos);
         }
 
         return false;
