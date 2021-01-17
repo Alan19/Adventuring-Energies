@@ -42,10 +42,7 @@ public class EnergyRecoveryEvents {
 
     @Nonnull
     private static Pair<LazyOptional<IEnergyRecoveryTimers>, LazyOptional<IEnergyTracker>> getTimerTrackerPair(ServerPlayerEntity player) {
-        final Pair<LazyOptional<IEnergyRecoveryTimers>, LazyOptional<IEnergyTracker>> lazyOptionalPair = timersMap.computeIfAbsent(player.getUniqueID(), uuid -> Pair.of(player.getCapability(AdventuringEnergiesAPI.energyRecoveryTimersCapability), player.getCapability(AdventuringEnergiesAPI.energyTrackerCapability)));
-        lazyOptionalPair.getLeft().addListener(optional -> timersMap.remove(player.getUniqueID()));
-        lazyOptionalPair.getRight().addListener(optional -> timersMap.remove(player.getUniqueID()));
-        return lazyOptionalPair;
+        return timersMap.computeIfAbsent(player.getUniqueID(), uuid -> Pair.of(player.getCapability(AdventuringEnergiesAPI.energyRecoveryTimersCapability), player.getCapability(AdventuringEnergiesAPI.energyTrackerCapability)));
     }
 
     @SubscribeEvent
