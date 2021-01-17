@@ -13,13 +13,13 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.event.entity.EntityLeaveWorldEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
-import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerXpEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.logging.log4j.core.jmx.Server;
 
 import javax.annotation.Nonnull;
 import java.util.HashMap;
@@ -42,7 +42,10 @@ public class EnergyRecoveryEvents {
 
     @Nonnull
     private static Pair<LazyOptional<IEnergyRecoveryTimers>, LazyOptional<IEnergyTracker>> getTimerTrackerPair(ServerPlayerEntity player) {
-        return timersMap.computeIfAbsent(player.getUniqueID(), uuid -> Pair.of(player.getCapability(AdventuringEnergiesAPI.energyRecoveryTimersCapability), player.getCapability(AdventuringEnergiesAPI.energyTrackerCapability)));
+        final Pair<LazyOptional<IEnergyRecoveryTimers>, LazyOptional<IEnergyTracker>> lazyOptionalPair = timersMap.computeIfAbsent(player.getUniqueID(), uuid -> Pair.of(player.getCapability(AdventuringEnergiesAPI.energyRecoveryTimersCapability), player.getCapability(AdventuringEnergiesAPI.energyTrackerCapability)));
+        lazyOptionalPair.getLeft().addListener(optional -> timersMap.remove(player.getUniqueID()));
+        lazyOptionalPair.getRight().addListener(optional -> timersMap.remove(player.getUniqueID()));
+        return lazyOptionalPair;
     }
 
     @SubscribeEvent
@@ -106,12 +109,17 @@ public class EnergyRecoveryEvents {
         return false;
     }
 
-
     @SubscribeEvent
-    public static void sendEnergyToClientOnLogin(PlayerEvent.PlayerLoggedInEvent event) {
-        if (event.getPlayer() instanceof ServerPlayerEntity) {
-            AdventuringEnergiesNetwork.sendEnergyToClient((ServerPlayerEntity) event.getPlayer());
+    public static void sendEnergyToClientOnWorldJoin(EntityJoinWorldEvent event) {
+        if (event.getEntity() instanceof ServerPlayerEntity) {
+            AdventuringEnergiesNetwork.sendEnergyToClient((ServerPlayerEntity) event.getEntity());
         }
     }
 
+    @SubscribeEvent
+    public static void onPlayerRemoved(EntityLeaveWorldEvent event) {
+        if (event.getEntity() instanceof ServerPlayerEntity) {
+            timersMap.remove(event.getEntity().getUniqueID());
+        }
+    }
 }
