@@ -29,7 +29,7 @@ import java.util.UUID;
 
 @Mod.EventBusSubscriber(modid = AdventuringEnergies.MOD_ID)
 public class EnergyRecoveryEvents {
-    private static final Map<UUID, Pair<LazyOptional<IEnergyRecoveryTimers>, LazyOptional<IEnergyTracker>>> timersMap = new HashMap<>();
+    public static final Map<UUID, Pair<LazyOptional<IEnergyRecoveryTimers>, LazyOptional<IEnergyTracker>>> timersMap = new HashMap<>();
 
     @SubscribeEvent
     public static void goldenOrbRecovery(TickEvent.PlayerTickEvent event) {
