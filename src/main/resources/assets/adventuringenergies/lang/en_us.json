@@ -1,5 +1,6 @@
 {
   "block.adventuringenergies.golden_altar": "Golden Altar",
   "item.adventuringenergies.amulet_of_recovery": "Amulet of Recovery",
-  "item.adventuringenergies.golden_altar": "Golden Altar"
+  "item.adventuringenergies.golden_altar": "Golden Altar",
+  "itemGroup.adventuringenergies": "Adventuring Energies"
 }

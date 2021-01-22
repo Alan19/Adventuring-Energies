@@ -4,6 +4,7 @@ import com.minercana.adventuringenergies.AdventuringEnergies;
 import com.minercana.adventuringenergies.blocks.AdventuringEnergiesBlocks;
 import com.minercana.adventuringenergies.items.AdventuringEnergiesItems;
 import net.minecraft.data.DataGenerator;
+import net.minecraft.item.ItemGroup;
 import net.minecraftforge.common.data.LanguageProvider;
 
 public class EnglishLocalization extends LanguageProvider {
@@ -15,6 +16,11 @@ public class EnglishLocalization extends LanguageProvider {
     protected void addTranslations() {
         addItems();
         addBlocks();
+        add(AdventuringEnergiesItems.ADVENTURING_ENERGIES_ITEM_GROUP, "Adventuring Energies");
+    }
+
+    private void add(ItemGroup key, String value) {
+        add("itemGroup." + key.getPath(), "Adventuring Energies");
     }
 
     private void addBlocks() {
