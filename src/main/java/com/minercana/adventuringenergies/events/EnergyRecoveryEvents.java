@@ -137,8 +137,10 @@ public class EnergyRecoveryEvents {
 
     @SubscribeEvent
     public static void onPlayerClone(PlayerEvent.Clone event) {
-        final LazyOptional<IEnergyTracker> energyTrackerLazyOptional = event.getOriginal().getCapability(AdventuringEnergiesAPI.energyTrackerCapability);
-        energyTrackerLazyOptional.ifPresent(tracker -> event.getPlayer().getCapability(AdventuringEnergiesAPI.energyTrackerCapability).ifPresent(newTracker -> newTracker.deserializeNBT(tracker.serializeNBT())));
-        energyTrackerLazyOptional.invalidate();
+        if (event.isWasDeath()) {
+            final LazyOptional<IEnergyTracker> energyTrackerLazyOptional = event.getOriginal().getCapability(AdventuringEnergiesAPI.energyTrackerCapability);
+            energyTrackerLazyOptional.ifPresent(tracker -> event.getPlayer().getCapability(AdventuringEnergiesAPI.energyTrackerCapability).ifPresent(newTracker -> newTracker.deserializeNBT(tracker.serializeNBT())));
+            energyTrackerLazyOptional.invalidate();
+        }
     }
 }

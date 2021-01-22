@@ -18,6 +18,9 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.util.math.shapes.ISelectionContext;
+import net.minecraft.util.math.shapes.VoxelShape;
+import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.util.LazyOptional;
@@ -27,8 +30,17 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Random;
 
 public class GoldenAltar extends Block {
+
+    protected static final VoxelShape SHAPE = Block.makeCuboidShape(-16, 0, -8, 32, 16, 24);
+
     public GoldenAltar() {
         super(AbstractBlock.Properties.create(Material.IRON, MaterialColor.GOLD).setRequiresTool().hardnessAndResistance(3.0F, 6.0F).setLightLevel(value -> 15).sound(SoundType.METAL).notSolid());
+    }
+
+    @Override
+    @ParametersAreNonnullByDefault
+    public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context) {
+        return SHAPE;
     }
 
     @Override
