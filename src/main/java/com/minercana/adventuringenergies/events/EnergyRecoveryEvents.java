@@ -16,6 +16,7 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.EntityLeaveWorldEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerXpEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -42,7 +43,21 @@ public class EnergyRecoveryEvents {
 
     @Nonnull
     private static Pair<LazyOptional<IEnergyRecoveryTimers>, LazyOptional<IEnergyTracker>> getTimerTrackerPair(ServerPlayerEntity player) {
-        return timersMap.computeIfAbsent(player.getUniqueID(), uuid -> Pair.of(player.getCapability(AdventuringEnergiesAPI.energyRecoveryTimersCapability), player.getCapability(AdventuringEnergiesAPI.energyTrackerCapability)));
+        return timersMap.computeIfAbsent(player.getUniqueID(), uuid -> {
+            final LazyOptional<IEnergyRecoveryTimers> timerCap = player.getCapability(AdventuringEnergiesAPI.energyRecoveryTimersCapability);
+            timerCap.addListener(optional -> {
+                if (timersMap.containsKey(uuid)) {
+                    timersMap.remove(uuid);
+                }
+            });
+            final LazyOptional<IEnergyTracker> trackerCap = player.getCapability(AdventuringEnergiesAPI.energyTrackerCapability);
+            trackerCap.addListener(optional -> {
+                if (timersMap.containsKey(uuid)) {
+                    timersMap.remove(uuid);
+                }
+            });
+            return Pair.of(timerCap, trackerCap);
+        });
     }
 
     @SubscribeEvent
@@ -118,5 +133,12 @@ public class EnergyRecoveryEvents {
         if (event.getEntity() instanceof ServerPlayerEntity) {
             timersMap.remove(event.getEntity().getUniqueID());
         }
+    }
+
+    @SubscribeEvent
+    public static void onPlayerClone(PlayerEvent.Clone event) {
+        final LazyOptional<IEnergyTracker> energyTrackerLazyOptional = event.getOriginal().getCapability(AdventuringEnergiesAPI.energyTrackerCapability);
+        energyTrackerLazyOptional.ifPresent(tracker -> event.getPlayer().getCapability(AdventuringEnergiesAPI.energyTrackerCapability).ifPresent(newTracker -> newTracker.deserializeNBT(tracker.serializeNBT())));
+        energyTrackerLazyOptional.invalidate();
     }
 }
