@@ -6,14 +6,13 @@ import com.minercana.adventuringenergies.api.energyrecoverytimers.IEnergyRecover
 import com.minercana.adventuringenergies.api.energytracker.EnergyTracker;
 import com.minercana.adventuringenergies.api.energytracker.IEnergyTracker;
 import com.minercana.adventuringenergies.blocks.AdventuringEnergiesBlocks;
+import com.minercana.adventuringenergies.blocks.BlockRendering;
 import com.minercana.adventuringenergies.data.*;
 import com.minercana.adventuringenergies.energytypes.AEEnergyTypes;
 import com.minercana.adventuringenergies.energytypes.EnergyType;
 import com.minercana.adventuringenergies.items.AdventuringEnergiesItems;
 import com.minercana.adventuringenergies.network.AdventuringEnergiesNetwork;
 import net.minecraft.block.Block;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.RenderTypeLookup;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
@@ -90,7 +89,7 @@ public class AdventuringEnergies {
     private void doClientStuff(final FMLClientSetupEvent event) {
         // do something that can only be done on the client
         LOGGER.info("Got game settings {}", event.getMinecraftSupplier().get().gameSettings);
-        new BlockRenderTypes().setupRenderTypes();
+        BlockRendering.setupRenderTypes();
     }
 
     private void enqueueIMC(final InterModEnqueueEvent event) {
@@ -135,11 +134,4 @@ public class AdventuringEnergies {
         }
     }
 
-    @OnlyIn(Dist.CLIENT)
-    private static class BlockRenderTypes {
-        public void setupRenderTypes() {
-            RenderType cutout = RenderType.getCutout();
-            RenderTypeLookup.setRenderLayer(AdventuringEnergiesBlocks.GOLDEN_ALTAR.get(), cutout);
-        }
-    }
 }
