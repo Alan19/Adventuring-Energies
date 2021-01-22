@@ -1,6 +1,7 @@
 package com.minercana.adventuringenergies.data;
 
 import com.google.common.collect.ImmutableList;
+import com.minercana.adventuringenergies.AdventuringEnergies;
 import com.minercana.adventuringenergies.blocks.AdventuringEnergiesBlocks;
 import com.minercana.adventuringenergies.items.AdventuringEnergiesItems;
 import com.mojang.datafixers.util.Pair;
@@ -8,6 +9,7 @@ import net.minecraft.block.Block;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.LootTableProvider;
 import net.minecraft.data.loot.BlockLootTables;
+import net.minecraft.data.loot.ChestLootTables;
 import net.minecraft.loot.*;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.RegistryObject;
@@ -27,7 +29,7 @@ public class AdventuringEnergiesLootTableProvider extends LootTableProvider {
 
     @Override
     protected List<Pair<Supplier<Consumer<BiConsumer<ResourceLocation, LootTable.Builder>>>, LootParameterSet>> getTables() {
-        return ImmutableList.of(Pair.of(AdventuringEnergiesBlockLootTables::new, LootParameterSets.BLOCK));
+        return ImmutableList.of(Pair.of(AdventuringEnergiesBlockLootTables::new, LootParameterSets.BLOCK), Pair.of(AdventuringEnergiesChestLootTables::new, LootParameterSets.CHEST));
     }
 
     @Override
@@ -46,6 +48,20 @@ public class AdventuringEnergiesLootTableProvider extends LootTableProvider {
         @Override
         protected void addTables() {
             registerLootTable(AdventuringEnergiesBlocks.GOLDEN_ALTAR.get(), dropping(AdventuringEnergiesItems.GOLDEN_ALTAR.get()));
+        }
+    }
+
+    public static class AdventuringEnergiesChestLootTables extends ChestLootTables {
+        @Override
+        public void accept(@Nonnull BiConsumer<ResourceLocation, LootTable.Builder> consumer) {
+            createInjectPool(consumer, "simple_dungeon", LootTable.builder()
+                    .addLootPool(LootPool.builder()
+                            .rolls(BinomialRange.of(1, .1f))
+                            .addEntry(ItemLootEntry.builder(AdventuringEnergiesItems.AMULET_OF_RECOVERY.get()))));
+        }
+
+        public void createInjectPool(BiConsumer<ResourceLocation, LootTable.Builder> consumer, String name, LootTable.Builder builder) {
+            consumer.accept(new ResourceLocation(AdventuringEnergies.MOD_ID, "inject/chests/" + name), builder);
         }
     }
 }
