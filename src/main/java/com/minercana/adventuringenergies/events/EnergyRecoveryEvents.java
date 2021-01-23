@@ -7,7 +7,11 @@ import com.minercana.adventuringenergies.api.energytracker.IEnergyTracker;
 import com.minercana.adventuringenergies.energytypes.AEEnergyTypes;
 import com.minercana.adventuringenergies.energytypes.EnergyType;
 import com.minercana.adventuringenergies.network.AdventuringEnergiesNetwork;
+import net.minecraft.entity.CreatureAttribute;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.BoatEntity;
+import net.minecraft.entity.monster.MonsterEntity;
+import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.math.BlockPos;
@@ -16,6 +20,8 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.EntityLeaveWorldEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
+import net.minecraftforge.event.entity.living.LivingDeathEvent;
+import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerXpEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -38,6 +44,19 @@ public class EnergyRecoveryEvents {
             final Pair<LazyOptional<IEnergyRecoveryTimers>, LazyOptional<IEnergyTracker>> timerTrackerPair = getTimerTrackerPair(player);
             handleGoldOrbRecovery(player, timerTrackerPair);
             handleAzureOrbRecovery(player, timerTrackerPair);
+            handleVerdantOrbRecovery(player, timerTrackerPair);
+        }
+    }
+
+    private static void handleVerdantOrbRecovery(ServerPlayerEntity player, Pair<LazyOptional<IEnergyRecoveryTimers>, LazyOptional<IEnergyTracker>> timerTrackerPair) {
+        if (!player.isAirBorne || !canAddOrb(player, AEEnergyTypes.VERDANT.get())) {
+            timerTrackerPair.getLeft().ifPresent(IEnergyRecoveryTimers::resetGreenTimer);
+        }
+        else {
+            final Boolean timerFilled = timerTrackerPair.getLeft().map(timers -> timers.incrementGreenTimer(player)).orElse(false);
+            if (timerFilled) {
+                timerTrackerPair.getRight().ifPresent(tracker -> tracker.addEnergy(AEEnergyTypes.VERDANT.get(), player, false));
+            }
         }
     }
 
@@ -63,7 +82,11 @@ public class EnergyRecoveryEvents {
     @SubscribeEvent
     public static void onPlayerHurt(LivingDamageEvent event) {
         if (event.getEntityLiving() instanceof ServerPlayerEntity) {
-            getTimerTrackerPair((ServerPlayerEntity) event.getEntityLiving()).getLeft().ifPresent(IEnergyRecoveryTimers::resetBlueTimer);
+            final ServerPlayerEntity player = (ServerPlayerEntity) event.getEntityLiving();
+            getTimerTrackerPair(player).getLeft().ifPresent(IEnergyRecoveryTimers::resetBlueTimer);
+            if (event.getEntityLiving().getHealth() < event.getEntityLiving().getMaxHealth() / 2) {
+                event.getEntityLiving().getCapability(AdventuringEnergiesAPI.energyTrackerCapability).ifPresent(tracker -> tracker.addEnergy(AEEnergyTypes.RED.get(), 2, player, false));
+            }
         }
     }
 
@@ -141,6 +164,19 @@ public class EnergyRecoveryEvents {
             final LazyOptional<IEnergyTracker> energyTrackerLazyOptional = event.getOriginal().getCapability(AdventuringEnergiesAPI.energyTrackerCapability);
             energyTrackerLazyOptional.ifPresent(tracker -> event.getPlayer().getCapability(AdventuringEnergiesAPI.energyTrackerCapability).ifPresent(newTracker -> newTracker.deserializeNBT(tracker.serializeNBT())));
             energyTrackerLazyOptional.invalidate();
+        }
+    }
+
+    @SubscribeEvent
+    public static void onPlayerKillFleshy(LivingDeathEvent event) {
+        final Entity source = event.getSource().getTrueSource();
+        if (source instanceof ServerPlayerEntity) {
+            if (event.getEntityLiving() instanceof AnimalEntity) {
+                source.getCapability(AdventuringEnergiesAPI.energyTrackerCapability).ifPresent(tracker -> tracker.addEnergy(AEEnergyTypes.RED.get(), 3, (ServerPlayerEntity) source, false));
+            }
+            if (event.getEntityLiving() instanceof MonsterEntity) {
+                source.getCapability(AdventuringEnergiesAPI.energyTrackerCapability).ifPresent(tracker -> tracker.addEnergy(AEEnergyTypes.RED.get(), 1, (ServerPlayerEntity) source, false));
+            }
         }
     }
 }

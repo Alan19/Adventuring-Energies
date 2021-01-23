@@ -1,7 +1,5 @@
 package com.minercana.adventuringenergies.api.energyrecoverytimers;
 
-import com.minercana.adventuringenergies.api.AdventuringEnergiesAPI;
-import com.minercana.adventuringenergies.energytypes.AEEnergyTypes;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.RegistryKey;
@@ -31,8 +29,9 @@ public class EnergyRecoveryTimers implements IEnergyRecoveryTimers {
     @Override
     public boolean incrementBlueTimer(ServerPlayerEntity playerEntity, int i) {
         blueTimer += i;
-        if (blueTimer >= getBlueRequiredTime(playerEntity)) {
-            blueTimer = 0;
+        final int blueRequiredTime = getBlueRequiredTime(playerEntity);
+        if (blueTimer >= blueRequiredTime) {
+            blueTimer -= blueRequiredTime;
             return true;
         }
         return false;
@@ -40,17 +39,10 @@ public class EnergyRecoveryTimers implements IEnergyRecoveryTimers {
 
     @Override
     public boolean incrementGreenTimer(ServerPlayerEntity playerEntity) {
-        if (playerEntity.getCapability(AdventuringEnergiesAPI.energyTrackerCapability).map(tracker -> tracker.addEnergy(AEEnergyTypes.VERDANT.get(), playerEntity, true) == 0).orElse(false)) {
-            if (playerEntity.isAirBorne) {
-                greenTimer++;
-            }
-            else {
-                greenTimer = 0;
-            }
-            if (greenTimer >= 400) {
-                playerEntity.getCapability(AdventuringEnergiesAPI.energyTrackerCapability).ifPresent(tracker -> tracker.addEnergy(AEEnergyTypes.VERDANT.get(), playerEntity, false));
-                return true;
-            }
+        greenTimer += 1;
+        if (greenTimer >= 400) {
+            greenTimer = 0;
+            return true;
         }
         return false;
     }
@@ -88,6 +80,11 @@ public class EnergyRecoveryTimers implements IEnergyRecoveryTimers {
     @Override
     public void resetBlueTimer() {
         blueTimer = 0;
+    }
+
+    @Override
+    public void resetGreenTimer() {
+        greenTimer = 0;
     }
 
     @Override

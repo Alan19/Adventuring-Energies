@@ -19,4 +19,6 @@ public interface IEnergyRecoveryTimers extends INBTSerializable<CompoundNBT> {
     void resetYellowTimer();
 
     void resetBlueTimer();
+
+     void resetGreenTimer();
 }
