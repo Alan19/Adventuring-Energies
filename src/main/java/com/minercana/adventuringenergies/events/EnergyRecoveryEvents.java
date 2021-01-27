@@ -84,7 +84,7 @@ public class EnergyRecoveryEvents {
         if (event.getEntityLiving() instanceof ServerPlayerEntity) {
             final ServerPlayerEntity player = (ServerPlayerEntity) event.getEntityLiving();
             getTimerTrackerPair(player).getLeft().ifPresent(IEnergyRecoveryTimers::resetBlueTimer);
-            if (event.getEntityLiving().getHealth() < event.getEntityLiving().getMaxHealth() / 2) {
+            if (event.getEntityLiving().getHealth() - event.getAmount() < event.getEntityLiving().getMaxHealth() / 2 && event.getEntityLiving().getHealth() >= event.getEntityLiving().getMaxHealth() / 2) {
                 event.getEntityLiving().getCapability(AdventuringEnergiesAPI.energyTrackerCapability).ifPresent(tracker -> tracker.addEnergy(AEEnergyTypes.RED.get(), 2, player, false));
             }
         }
