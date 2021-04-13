@@ -8,11 +8,14 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.potion.EffectInstance;
+import net.minecraft.potion.Effects;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -68,7 +71,7 @@ public class ToolEvents {
         float respawnAngle = defaultRespawnAngle;
         if (spawnPosition != null) {
             BlockState blockstate = respawnDimension.getBlockState(spawnPosition);
-            boolean usingRespawnAnchor = blockstate.isIn(Blocks.RESPAWN_ANCHOR);
+            boolean usingRespawnAnchor = blockstate.matchesBlock(Blocks.RESPAWN_ANCHOR);
             if (blockstate.isIn(BlockTags.BEDS) || usingRespawnAnchor) {
                 if (optional.isPresent()){
                     // Adjust the respawn angle if player is using a repsawn anchor or bed
@@ -81,6 +84,16 @@ public class ToolEvents {
         // Use world spawn if optional is empty (no bed or respawn anchor)
         final BlockPos worldSpawn = playerEntity.getServerWorld().getSpawnPoint();
         return Triple.of(respawnDimension, optional.orElseGet(() -> new Vector3d(worldSpawn.getX(), worldSpawn.getY(), worldSpawn.getZ())), respawnAngle);
+    }
+
+    @SubscribeEvent
+    public static void chaliceRegeneration(TickEvent.PlayerTickEvent event) {
+        if (event.player instanceof ServerPlayerEntity) {
+            // TODO Query capability here
+            if (!event.player.isPotionActive(Effects.REGENERATION)) {
+                event.player.addPotionEffect(new EffectInstance(Effects.REGENERATION, 5));
+            }
+        }
     }
 }
 

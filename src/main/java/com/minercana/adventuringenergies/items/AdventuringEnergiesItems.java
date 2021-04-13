@@ -18,6 +18,7 @@ public class AdventuringEnergiesItems {
         }
     };
     public static final RegistryObject<Item> AMULET_OF_RECOVERY = ITEMS.register("amulet_of_recovery", () -> new Item((new Item.Properties()).maxStackSize(1).group(ItemGroup.COMBAT).rarity(Rarity.UNCOMMON)));
+    public static final RegistryObject<Item> CHALICE_OF_BLOOD = ITEMS.register("chalice_of_blood", () -> new Item((new Item.Properties()).maxStackSize(1).group(ItemGroup.COMBAT).rarity(Rarity.UNCOMMON)));
 
     /**
      * Converts a block into a BlockNamedItem that belongs to the Astral tab
